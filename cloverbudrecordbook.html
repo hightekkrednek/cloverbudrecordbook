@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Cloverbud Record Book (Web Form)</title>
+  <style>
+    :root{
+      --bg:#0f172a;
+      --panel:#111827;
+      --panel-2:#0b1220;
+      --text:#f8fafc;
+      --muted:#cbd5e1;
+      --accent:#22c55e;
+      --accent-2:#38bdf8;
+      --danger:#f97316;
+      --border:rgba(255,255,255,0.08);
+      --radius:14px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(1200px 700px at 10% 10%, #0b2a1a 0%, transparent 50%),
+                  radial-gradient(1200px 700px at 90% 20%, #0b1f33 0%, transparent 50%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding: 32px 20px 10px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .title{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .badge{
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color:#06121a;
+      font-weight:700;
+      padding: 6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      letter-spacing:0.3px;
+    }
+    h1{
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      font-weight: 750;
+    }
+    .subtitle{
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 70ch;
+      line-height:1.45;
+      font-size: 14.5px;
+    }
+
+    main{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 10px 20px 60px;
+    }
+
+    form{
+      display:grid;
+      gap: 18px;
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent 35%),
+                  var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 18px 6px;
+      box-shadow: var(--shadow);
+    }
+    .panel h2{
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    .panel p.helper{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 12.8px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 12px;
+    }
+
+    .field{
+      grid-column: span 12;
+      margin-bottom: 12px;
+    }
+    @media (min-width: 760px){
+      .col-6{grid-column: span 6;}
+      .col-4{grid-column: span 4;}
+      .col-8{grid-column: span 8;}
+      .col-3{grid-column: span 3;}
+      .col-9{grid-column: span 9;}
+    }
+
+    label{
+      display:block;
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    textarea{
+      width: 100%;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    textarea{
+      min-height: 92px;
+      resize: vertical;
+    }
+    input:focus, textarea:focus{
+      border-color: rgba(56,189,248,0.55);
+      box-shadow: 0 0 0 3px rgba(56,189,248,0.18);
+    }
+
+    .check-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin: 4px 0 14px;
+    }
+    @media (min-width: 760px){
+      .check-grid{
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .check{
+      display:flex;
+      align-items:flex-start;
+      gap: 8px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      padding: 10px 10px;
+      border-radius: 10px;
+    }
+    .check input{
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
+    .check span{
+      font-size: 13.5px;
+      color: var(--text);
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+      justify-content: space-between;
+      padding: 14px 18px 18px;
+    }
+    .btn{
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 650;
+      font-size: 14px;
+      cursor:pointer;
+      transition: transform .06s ease, filter .15s ease, border-color .15s ease;
+    }
+    .btn:active{transform: translateY(1px);}
+    .btn-primary{
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color:#041017;
+    }
+    .btn-secondary{
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-danger{
+      background: transparent;
+      border-color: rgba(249,115,22,0.5);
+      color: #ffd7b5;
+    }
+
+    .status{
+      font-size: 12.5px;
+      color: var(--muted);
+      min-height: 18px;
+    }
+
+    .small{
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+    .divider{
+      height:1px;
+      background: var(--border);
+      margin: 10px 0 16px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">
+      <span class="badge">4-H Cloverbud</span>
+      <h1>My Cloverbud Record Book — Web Form</h1>
+    </div>
+    <p class="subtitle">
+      This digital version mirrors the Cloverbud record book prompts for ages 5–7.
+      You can type responses, then send a copy to an email address you enter.
+      For child privacy, avoid hosting this publicly without appropriate safeguards.
+    </p>
+  </header>
+
+  <main>
+    <form id="recordForm">
+
+      <!-- Recipient -->
+      <section class="panel">
+        <h2>Delivery</h2>
+        <p class="helper">
+          Enter the email address that should receive this completed form.
+          If EmailJS is not configured, your email app will open with the form content.
+        </p>
+        <div class="grid">
+          <div class="field col-6">
+            <label for="recipientEmail">Send to (recipient email)</label>
+            <input id="recipientEmail" name="recipientEmail" type="email" required placeholder="example@email.com" />
+          </div>
+          <div class="field col-6">
+            <label for="senderName">Your name (optional)</label>
+            <input id="senderName" name="senderName" type="text" placeholder="Parent/Guardian name" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Basic Info -->
+      <section class="panel">
+        <h2>Member Information</h2>
+        <p class="helper">Corresponds to the basic identification fields in the record book.</p>
+        <div class="grid">
+          <div class="field col-6">
+            <label for="memberName">Name</label>
+            <input id="memberName" name="memberName" type="text" required />
+          </div>
+          <div class="field col-3">
+            <label for="age">Age</label>
+            <input id="age" name="age" type="number" min="0" max="18" />
+          </div>
+          <div class="field col-3">
+            <label for="county">County</label>
+            <input id="county" name="county" type="text" />
+          </div>
+          <div class="field col-8">
+            <label for="address">Address</label>
+            <input id="address" name="address" type="text" />
+          </div>
+          <div class="field col-4">
+            <label for="club">4-H Club</label>
+            <input id="club" name="club" type="text" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Club Meetings & Projects -->
+      <section class="panel">
+        <h2>Club Meetings & Projects</h2>
+        <p class="helper">
+          Matches the page with prompts about meetings, main project, other projects, and what the member likes about being a Clover Bud.
+        </p>
+        <div class="grid">
+          <div class="field col-4">
+            <label for="meetingCount">I went to __ club meetings</label>
+            <input id="meetingCount" name="meetingCount" type="number" min="0" />
+          </div>
+          <div class="field col-8">
+            <label for="meetingTopics">...and they were about</label>
+            <input id="meetingTopics" name="meetingTopics" type="text" placeholder="Short list or summary" />
+          </div>
+
+          <div class="field col-6">
+            <label for="mainProject">My main 4-H project is</label>
+            <input id="mainProject" name="mainProject" type="text" />
+          </div>
+          <div class="field col-6">
+            <label for="otherProjects">My other 4-H projects are</label>
+            <textarea id="otherProjects" name="otherProjects" placeholder="List one per line"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="likeCloverbud">I like being a Clover Bud because</label>
+            <textarea id="likeCloverbud" name="likeCloverbud"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leadership -->
+      <section class="panel">
+        <h2>Leadership</h2>
+        <p class="helper">Check the things you did.</p>
+
+        <div class="check-grid">
+          <label class="check">
+            <input type="checkbox" name="leadership" value="Led the 4-H pledge" />
+            <span>Led the 4-H pledge</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="leadership" value="Led the pledge of allegiance" />
+            <span>Led the pledge of allegiance</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="leadership" value="Led a song" />
+            <span>Led a song</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="leadership" value="Gave a talk" />
+            <span>Gave a talk</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="leadership" value="Gave a demonstration" />
+            <span>Gave a demonstration</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" name="leadership" value="Made a motion" />
+            <span>Made a motion</span>
+          </label>
+        </div>
+
+        <div class="grid">
+          <div class="field col-6">
+            <label for="leadershipOther1">Other leadership</label>
+            <input id="leadershipOther1" name="leadershipOther1" type="text" />
+          </div>
+          <div class="field col-6">
+            <label for="leadershipOther2">Other leadership</label>
+            <input id="leadershipOther2" name="leadershipOther2" type="text" />
+          </div>
+
+          <div class="field col-6">
+            <label for="electedAppointed">
+              Elected and Appointed Leadership
+              (committee member or club officer)
+            </label>
+            <textarea id="electedAppointed" name="electedAppointed"
+              placeholder="List roles or committees"></textarea>
+          </div>
+
+          <div class="field col-6">
+            <label for="communityService">
+              Community Service
+              (doing things for other people)
+            </label>
+            <textarea id="communityService" name="communityService"
+              placeholder="List what you did"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Awards, Marketing, Non-4-H -->
+      <section class="panel">
+        <h2>Awards, 4-H Marketing, and Other Activities</h2>
+        <div class="grid">
+          <div class="field col-4">
+            <label for="awards">Awards (List any awards won in 4-H)</label>
+            <textarea id="awards" name="awards" placeholder="List one per line"></textarea>
+          </div>
+          <div class="field col-4">
+            <label for="marketing">
+              4-H Marketing
+              (Who did you tell about 4-H? What did you do to promote 4-H?)
+            </label>
+            <textarea id="marketing" name="marketing"></textarea>
+          </div>
+          <div class="field col-4">
+            <label for="non4h">
+              Non-4-H Activities
+              (like school, church, sports)
+            </label>
+            <textarea id="non4h" name="non4h"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Show and Tell -->
+      <section class="panel">
+        <h2>Show and Tell — Main Project</h2>
+        <p class="helper">
+          The paper form suggests drawing/attaching pictures or listing things done.
+          Use text here; optionally add filenames/notes if you plan to attach images separately.
+        </p>
+        <div class="grid">
+          <div class="field">
+            <label for="showMain">Things I did in my main project</label>
+            <textarea id="showMain" name="showMain"></textarea>
+          </div>
+        </div>
+        <div class="small">
+          Note: This simple email version does not send image attachments automatically. If you need attachments,
+          use a backend or an email service that supports file uploads.
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Show and Tell — Other Projects</h2>
+        <div class="grid">
+          <div class="field">
+            <label for="showOther">Things I did in my other projects</label>
+            <textarea id="showOther" name="showOther"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <section class="panel" style="padding-bottom:0;">
+        <div class="actions">
+          <div>
+            <button type="submit" class="btn btn-primary">Submit & Send</button>
+            <button type="button" id="previewBtn" class="btn btn-secondary">Preview Email Body</button>
+            <button type="button" id="clearBtn" class="btn btn-danger">Clear Form</button>
+          </div>
+          <div class="status" id="status"></div>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <!-- OPTIONAL: EmailJS (uncomment to enable real send without mailto) -->
+  <!--
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    // 1) Create an EmailJS account
+    // 2) Add an email service
+    // 3) Create a template that accepts:
+    //    recipient_email, subject, message, sender_name
+    // 4) Paste your public key below
+    emailjs.init("YOUR_PUBLIC_KEY");
+  </script>
+  -->
+
+  <script>
+    const form = document.getElementById("recordForm");
+    const statusEl = document.getElementById("status");
+    const previewBtn = document.getElementById("previewBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    function getCheckedValues(name){
+      return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`))
+        .map(i => i.value);
+    }
+
+    function buildEmailBody(data){
+      const leadershipChecked = getCheckedValues("leadership");
+      const lines = [
+        "My Cloverbud Record Book (Web Submission)",
+        "----------------------------------------",
+        "",
+        "DELIVERY",
+        `Recipient Email: ${data.recipientEmail || ""}`,
+        `Sender Name: ${data.senderName || ""}`,
+        "",
+        "MEMBER INFORMATION",
+        `Name: ${data.memberName || ""}`,
+        `Age: ${data.age || ""}`,
+        `Address: ${data.address || ""}`,
+        `County: ${data.county || ""}`,
+        `4-H Club: ${data.club || ""}`,
+        "",
+        "CLUB MEETINGS & PROJECTS",
+        `Club meetings attended: ${data.meetingCount || ""}`,
+        `Meeting topics: ${data.meetingTopics || ""}`,
+        `Main project: ${data.mainProject || ""}`,
+        "Other projects:",
+        `${(data.otherProjects || "").trim() || ""}`,
+        "",
+        "I like being a Clover Bud because:",
+        `${(data.likeCloverbud || "").trim() || ""}`,
+        "",
+        "LEADERSHIP",
+        "Checked items:",
+        leadershipChecked.length ? leadershipChecked.join(", ") : "(none checked)",
+        `Other leadership 1: ${data.leadershipOther1 || ""}`,
+        `Other leadership 2: ${data.leadershipOther2 || ""}`,
+        "",
+        "ELECTED / APPOINTED LEADERSHIP",
+        `${(data.electedAppointed || "").trim() || ""}`,
+        "",
+        "COMMUNITY SERVICE",
+        `${(data.communityService || "").trim() || ""}`,
+        "",
+        "AWARDS",
+        `${(data.awards || "").trim() || ""}`,
+        "",
+        "4-H MARKETING",
+        `${(data.marketing || "").trim() || ""}`,
+        "",
+        "NON-4-H ACTIVITIES",
+        `${(data.non4h || "").trim() || ""}`,
+        "",
+        "SHOW AND TELL — MAIN PROJECT",
+        `${(data.showMain || "").trim() || ""}`,
+        "",
+        "SHOW AND TELL — OTHER PROJECTS",
+        `${(data.showOther || "").trim() || ""}`,
+        "",
+        "----------------------------------------",
+        "Generated from the web form version of the Cloverbud Record Book."
+      ];
+      return lines.join("\n");
+    }
+
+    function serializeForm(){
+      const fd = new FormData(form);
+      const obj = {};
+      for (const [k,v] of fd.entries()){
+        // Note: checkbox group "leadership" handled separately
+        if (k === "leadership") continue;
+        obj[k] = v;
+      }
+      return obj;
+    }
+
+    function setStatus(msg){
+      statusEl.textContent = msg || "";
+    }
+
+    function openMailto(recipient, subject, body){
+      const url =
+        `mailto:${encodeURIComponent(recipient)}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+      window.location.href = url;
+    }
+
+    previewBtn.addEventListener("click", () => {
+      const data = serializeForm();
+      const body = buildEmailBody(data);
+      alert(body);
+    });
+
+    clearBtn.addEventListener("click", () => {
+      if (confirm("Clear all fields?")){
+        form.reset();
+        setStatus("Form cleared.");
+      }
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      setStatus("");
+
+      const data = serializeForm();
+      const recipient = (data.recipientEmail || "").trim();
+      if (!recipient){
+        setStatus("Please enter a recipient email.");
+        return;
+      }
+
+      const subject = "My Cloverbud Record Book Submission";
+      const message = buildEmailBody(data);
+
+      // If EmailJS is enabled and configured, use it:
+      const emailJsAvailable = typeof window.emailjs !== "undefined";
+
+      if (emailJsAvailable){
+        try{
+          setStatus("Sending via EmailJS...");
+          // You must create a template with these variables:
+          // recipient_email, subject, message, sender_name
+          await window.emailjs.send(
+            "YOUR_SERVICE_ID",
+            "YOUR_TEMPLATE_ID",
+            {
+              recipient_email: recipient,
+              subject,
+              message,
+              sender_name: data.senderName || ""
+            }
+          );
+          setStatus("Sent successfully.");
+          return;
+        }catch(err){
+          console.error(err);
+          setStatus("EmailJS send failed. Falling back to your mail app...");
+        }
+      }
+
+      // Fallback: open the user's email client
+      // (This relies on the user's device being set up with an email app.)
+      openMailto(recipient, subject, message);
+      setStatus("Opened your email app with the form contents.");
+    });
+  </script>
+</body>
+</html>
+
